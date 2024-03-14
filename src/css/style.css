@@ -1,0 +1,11 @@
+.country {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.country img {
+    width: 30px;
+    height: auto;
+    margin-right: 10px;
+}
