@@ -43,10 +43,10 @@ async function handleInput() {
 }
 
 function displayCountries(countries) {
-    // Clear any previous results
+    
     clearResults();
 
-    // If there are no countries found, show a message
+    
     if (countries.length === 0) {
         const message = document.createElement('p');
         message.textContent = 'No countries found.';
@@ -54,7 +54,7 @@ function displayCountries(countries) {
         return;
     }
 
-    // Create list items for each country found
+    
     countries.forEach(country => {
         const listItem = document.createElement('li');
         listItem.textContent = country.name.official;
@@ -66,10 +66,10 @@ function displayCountries(countries) {
 }
 
 function displayCountryInfo(country) {
-    // Clear previous country info
+    
     countryInfo.innerHTML = '';
 
-    // Create elements to display country info
+   
     const name = document.createElement('h2');
     name.textContent = country.name.official;
     const capital = document.createElement('p');
@@ -80,7 +80,7 @@ function displayCountryInfo(country) {
     flag.src = country.flags.svg;
     flag.alt = `${country.name.official} flag`;
 
-    // Append elements to country info div
+   
     countryInfo.appendChild(name);
     countryInfo.appendChild(capital);
     countryInfo.appendChild(population);
@@ -96,7 +96,7 @@ function clearResults() {
     countryInfo.innerHTML = '';
 }
 
-// Debounce function to limit the rate of function calls
+
 function debounce(func, delay) {
     let timeoutId;
     return function(...args) {
