@@ -1,7 +1,7 @@
-import { fetchCountries } from './fetchCountries/fetchCountries.js'
-import './css/styles.css'
-import debounce from 'lodash.debounce'
-
+import { fetchCountries } from './fetchCountries/fetchCountries.js';
+import './css/styles.css';
+import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
 
 const searchBox = document.getElementById('search-box');
 const loader = document.querySelector('.loader');
@@ -15,19 +15,16 @@ searchBox.addEventListener('input', debounce(handleInput, 300));
 
 async function handleInput() {
     const searchTerm = searchBox.value.trim();
-    
-    
+
     if (!searchTerm) {
         clearResults();
         return;
     }
 
- 
     if (searchTerm === lastSearch) {
         return;
     }
 
-   
     loader.style.display = 'block';
     error.style.display = 'none';
 
@@ -37,16 +34,15 @@ async function handleInput() {
     } catch (err) {
         console.error('Error fetching countries:', err);
         showError();
+        Notiflix.Notify.failure('Oops, there is a problem with the search.');
     } finally {
         loader.style.display = 'none';
     }
 }
 
 function displayCountries(countries) {
-    
     clearResults();
 
-    
     if (countries.length === 0) {
         const message = document.createElement('p');
         message.textContent = 'No countries found.';
@@ -54,7 +50,11 @@ function displayCountries(countries) {
         return;
     }
 
-    
+    if (countries.length > 10) {
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+        return;
+    }
+
     countries.forEach(country => {
         const listItem = document.createElement('li');
         listItem.textContent = country.name.official;
@@ -66,10 +66,8 @@ function displayCountries(countries) {
 }
 
 function displayCountryInfo(country) {
-    
     countryInfo.innerHTML = '';
 
-   
     const name = document.createElement('h2');
     name.textContent = country.name.official;
     const capital = document.createElement('p');
@@ -80,7 +78,6 @@ function displayCountryInfo(country) {
     flag.src = country.flags.svg;
     flag.alt = `${country.name.official} flag`;
 
-   
     countryInfo.appendChild(name);
     countryInfo.appendChild(capital);
     countryInfo.appendChild(population);
@@ -97,13 +94,3 @@ function clearResults() {
 }
 
 
-
-//const debounce = require('lodash.debounce');//
-
-//function alertWrongName() {
-    //Notiflix.Notify.failure('Oops, there is no country with that name')
-  //}
-  
-  //function alertTooManyMatches() {
-   // Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
-  //}
