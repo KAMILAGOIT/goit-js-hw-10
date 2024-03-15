@@ -108,6 +108,7 @@ function debounce(func, delay) {
         }, delay);
     };
 }
+//const debounce = require('lodash.debounce');//
 
 //function alertWrongName() {
     //Notiflix.Notify.failure('Oops, there is no country with that name')
