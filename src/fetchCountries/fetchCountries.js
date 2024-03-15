@@ -1,5 +1,6 @@
 export async function fetchCountries(name) {
-  const response = await fetch(`https://restcountries.com/v3.1/all?fields=name,flags`);
+const URL = 'https://restcountries.com/v3.1/name/'
+const fields = 'fields=name,capital,population,flags,languages'
   if (!response.ok) {
     throw new Error('Failed to fetch countries');
   }
