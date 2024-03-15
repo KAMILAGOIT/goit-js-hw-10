@@ -1,4 +1,4 @@
-import { fetchCountries } from './js/fetchCountries'
+import { fetchCountries } from './fetchCountries/fetchCountries'
 import './css/styles.css'
 import debounce from 'lodash.debounce'
 
@@ -22,12 +22,12 @@ async function handleInput() {
         return;
     }
 
-    // If the search term is the same as the last one, no need to search again
+ 
     if (searchTerm === lastSearch) {
         return;
     }
 
-    // Show loader while fetching data
+   
     loader.style.display = 'block';
     error.style.display = 'none';
 
