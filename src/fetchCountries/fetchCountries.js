@@ -1,15 +1,8 @@
-export async function fetchCountries(name) {
-  const url = `https://restcountries.com/v2/name/${name}?fields=name.official,capital,population,flags.svg,languages`;
+const BASE_URL = 'https://restcountries.com/v3.1/name/'
+const fields = 'fields=name,capital,population,flags,languages'
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch countries');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching countries:', error);
-    throw error;
-  }
+export function fetchCountries(name) {
+  return fetch(`${BASE_URL}${name}?${fields}`)
+    .then(response => response.json())
+    .catch(error => console.log(error))
 }

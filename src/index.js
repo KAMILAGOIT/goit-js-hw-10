@@ -1,86 +1,71 @@
-import { fetchCountries } from './fetchCountries.js';
-import debounce from 'lodash.debounce';
-import Notiflix from 'notiflix';
+import './css/styles.css'
+import debounce from 'lodash.debounce'
+import Notiflix from 'notiflix'
+import { fetchCountries } from './js/fetch-countries'
 
-const searchBox = document.getElementById('search-box');
-const countryList = document.querySelector('.country-list');
-const countryInfo = document.querySelector('.country-info');
+const DEBOUNCE_DELAY = 300
 
-searchBox.addEventListener('input', debounce(handleInput, 300));
+const countryInput = document.querySelector('#search-box')
+const countryList = document.querySelector('.country-list')
+const countryInfo = document.querySelector('.country-info')
 
-async function handleInput() {
-  const searchTerm = searchBox.value.trim();
+countryInput.addEventListener('input', debounce(onCountryInput, DEBOUNCE_DELAY))
 
-  if (!searchTerm) {
-    clearResults();
-    return;
+function onCountryInput() {
+  const name = countryInput.value.trim()
+  if (name === '') {
+    return (countryList.innerHTML = ''), (countryInfo.innerHTML = '')
   }
 
-  try {
-    const countries = await fetchCountries(searchTerm);
-    displayCountries(countries);
-  } catch (error) {
-    console.error('Error fetching countries:', error);
-    Notiflix.Notify.failure('Oops, there is no country with that name');
-    clearResults();
-  }
+  fetchCountries(name)
+    .then(countries => {
+      countryList.innerHTML = ''
+      countryInfo.innerHTML = ''
+      if (countries.length === 1) {
+        countryList.insertAdjacentHTML('beforeend', renderCountryList(countries))
+        countryInfo.insertAdjacentHTML('beforeend', renderCountryInfo(countries))
+      } else if (countries.length >= 10) {
+        alertTooManyMatches()
+      } else {
+        countryList.insertAdjacentHTML('beforeend', renderCountryList(countries))
+      }
+    })
+    .catch(alertWrongName)
 }
 
-function displayCountries(countries) {
-  clearResults();
-
-  if (countries.length === 0) {
-    Notiflix.Notify.failure('Oops, there is no country with that name');
-    return;
-  }
-
-  if (countries.length > 10) {
-    Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
-    return;
-  }
-
-  countries.forEach(country => {
-    const listItem = document.createElement('li');
-    const flagImg = document.createElement('img');
-    flagImg.src = country.flags.svg;
-    flagImg.alt = `${country.name.official} flag`;
-    listItem.appendChild(flagImg);
-    const countryName = document.createElement('span');
-    countryName.textContent = country.name.official;
-    listItem.appendChild(countryName);
-    listItem.addEventListener('click', () => {
-      displayCountryInfo(country);
-    });
-    countryList.appendChild(listItem);
-  });
+function renderCountryList(countries) {
+  const markup = countries
+    .map(({ name, flags }) => {
+      return `
+          <li class="country-list__item">
+              <img class="country-list__flag" src="${flags.svg}" alt="Flag of ${name.official}" width = 30px height = 30px>
+              <h2 class="country-list__name">${name.official}</h2>
+          </li>
+          `
+    })
+    .join('')
+  return markup
 }
 
-function displayCountryInfo(country) {
-  countryInfo.innerHTML = '';
-
-  const flagImg = document.createElement('img');
-  flagImg.src = country.flags.svg;
-  flagImg.alt = `${country.name.official} flag`;
-  countryInfo.appendChild(flagImg);
-
-  const name = document.createElement('h2');
-  name.textContent = country.name.official;
-  countryInfo.appendChild(name);
-
-  const capital = document.createElement('p');
-  capital.textContent = `Capital: ${country.capital}`;
-  countryInfo.appendChild(capital);
-
-  const population = document.createElement('p');
-  population.textContent = `Population: ${country.population}`;
-  countryInfo.appendChild(population);
-
-  const languages = document.createElement('p');
-  languages.textContent = `Languages: ${country.languages.map(language => language.name).join(', ')}`;
-  countryInfo.appendChild(languages);
+function renderCountryInfo(countries) {
+  const markup = countries
+    .map(({ capital, population, languages }) => {
+      return `
+        <ul class="country-info__list">
+            <li class="country-info__item"><p><b>Capital: </b>${capital}</p></li>
+            <li class="country-info__item"><p><b>Population: </b>${population}</p></li>
+            <li class="country-info__item"><p><b>Languages: </b>${Object.values(languages).join(', ')}</p></li>
+        </ul>
+        `
+    })
+    .join('')
+  return markup
 }
 
-function clearResults() {
-  countryList.innerHTML = '';
-  countryInfo.innerHTML = '';
+function alertWrongName() {
+  Notiflix.Notify.failure('Oops, there is no country with that name')
+}
+
+function alertTooManyMatches() {
+  Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
 }
