@@ -1,6 +1,6 @@
 import { fetchCountries } from './fetchCountries.js';
 import debounce from 'lodash.debounce';
-import './css/styles.css';
+import './styles.css';
 
 const searchBox = document.getElementById('search-box');
 const countryList = document.querySelector('.country-list');
