@@ -1,5 +1,5 @@
 export async function fetchCountries(name) {
-  const response = await fetch(`https://restcountries.com/v3.1/all?fields=name,capital,currencies`);
+  const response = await fetch(`https://restcountries.com/v3.1/{service}?fields={name},{capital},{population},{languages}`);
   if (!response.ok) {
     throw new Error('Failed to fetch countries');
   }
